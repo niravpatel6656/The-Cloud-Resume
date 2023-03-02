@@ -1,4 +1,34 @@
-h1{
-    background-color: black;
-    color: aqua;
+.outline {
+  background-color: rgb(182, 151, 113);
+  max-width: 80%;
+  margin: auto;
+}
+.name {
+    display: grid;
+    justify-content: center;
+}
+.pal {
+    display: grid;
+    justify-content: center;
+}
+.jobrole {
+    display: grid;
+    justify-items: center;
+}
+
+.forpadding {
+    
+  padding: 0% 10%;
+}
+.companynameanddate{
+    display: flex;
+    justify-content: space-between;
+}
+.companyandaddress {
+    align-items: baseline;
+   display: flex;
+}
+h4{
+    margin: 0;
+    padding: 0;
 }
