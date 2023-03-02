@@ -2,6 +2,7 @@
   background-color: rgb(182, 151, 113);
   max-width: 80%;
   margin: auto;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 .name {
     display: grid;
@@ -28,7 +29,19 @@
     align-items: baseline;
    display: flex;
 }
+.Collegenameanddate{
+    align-items: baseline;
+   display: flex;
+   justify-content: space-between;
+}
+.clgandlocation{
+    align-items: baseline;
+   display: flex;
+}
 h4{
     margin: 0;
     padding: 0;
+}
+.degree{
+    display: flex;
 }
