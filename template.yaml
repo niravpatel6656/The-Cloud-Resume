@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  cloud-resume
+
+  Sample SAM Template for cloud-resume
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  demoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: demo
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+
+  MyBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: nirav1986
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+  MyBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: nirav1986
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource: !Sub "arn:aws:s3:::nirav1986/*" 
+  MyDistribution:
+      Type: "AWS::CloudFront::Distribution"
+      Properties:
+        DistributionConfig:
+          Aliases: 
+            - www.niravkpatel.com
+          ViewerCertificate:
+            AcmCertificateArn: arn:aws:acm:us-east-1:428459263223:certificate/abe9d23d-318e-4b03-a59a-01467f489843
+            SslSupportMethod: sni-only
+          DefaultCacheBehavior:
+            ViewerProtocolPolicy: allow-all
+            TargetOriginId: nirav1986.s3-website-us-east-1.amazonaws.com
+            DefaultTTL: 0
+            MinTTL: 0
+            MaxTTL: 0
+            ForwardedValues:
+              QueryString: false
+          Origins:
+            - DomainName: nirav1986.s3.us-east-1.amazonaws.com
+              Id: nirav1986.s3-website-us-east-1.amazonaws.com
+              CustomOriginConfig:
+                OriginProtocolPolicy: match-viewer
+          Enabled: true
+          DefaultRootObject: index.html
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
